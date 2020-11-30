@@ -1,0 +1,1 @@
+schtasks /create /tn “Scheduled Reboot” /tr “shutdown /r /t 0” /sc once /st 23:00:00 /sd 01/12/2020 /ru “System”
