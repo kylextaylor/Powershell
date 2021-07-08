@@ -1,4 +1,4 @@
-#Replace PRINTSERVER with name of the Print Server
+#Replace PRINTSERVER with name of the Print Server you
 $PrintServer = "\\PRINTSERVER"
 
 $Printers = Get-WmiObject -Class Win32_Printer
