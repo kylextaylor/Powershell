@@ -1,0 +1,36 @@
+
+# The 'IsPastDue' property is 'true' when the current function invocation is later than scheduled.
+if ($Timer.IsPastDue) {
+    Write-Host "PowerShell timer is running late!"
+}
+
+# Write an information log with the current time.
+Write-Host "PowerShell timer trigger function ran! TIME: $currentUTCtime"
+
+$Date = (Get-Date).tostring("yyyy-MM-dd_HH-mm")
+$Zones = (Get-AzDNSZone).Name
+ForEach ($Zone in $Zones) {
+    $ZoneBackup = get-AzDnsRecordSet -ZoneName $Zone -ResourceGroupName DNS | ConvertTo-JSON
+    $ZoneBackup | Out-File -FilePath "$zone-$Date.txt"
+}
+
+$ResourceGroupName = $env:FUNC_STOR_RGName
+$StorageAccountName = $env:FUNC_STOR_ActName
+$BlobContainer = $env:FUNC_STOR_BlobContainer
+
+
+# Upload it to blob storage
+$StorageAccount = Get-AzStorageAccount -ResourceGroupName $ResourceGroupName -name $StorageAccountName
+$storageContext = $StorageAccount.Context
+
+Set-AzStorageBlobContent -Container $BlobContainer -Context $storageContext -
+
+$acctKey = (Get-AzRmStorageAccountKey -Name "ENTER RESOURCE HERE" -ResourceGroupName DNS).Value[0]
+
+$storageContext = New-AzStorageContext -StorageAccountName "ENTER ACCOUNT HERE" -StorageAccountKey "ENTER KEY HERE"
+
+# Copy the file to the storage account
+Set-AzStorageBlobContent -File "$zone-$Date.txt" -Container "dnszonebackups" -BlobType "Block" -Context $storageContext -Verbose
+
+# Delete temp file
+Remove-Item "$zone-$Date.txt" -confirm:$false
