@@ -1,0 +1,17 @@
+PS C:\> Get-NetConnectionProfile
+
+Name : savilltech.net
+InterfaceAlias : Internal
+InterfaceIndex : 12
+NetworkCategory : DomainAuthenticated
+IPv4Connectivity : LocalNetwork
+IPv6Connectivity : LocalNetwork
+
+Name : Network
+InterfaceAlias : Internet
+InterfaceIndex : 13
+NetworkCategory : Public
+IPv4Connectivity : LocalNetwork
+IPv6Connectivity : LocalNetwork
+
+PS C:\> Set-NetConnectionProfile -InterfaceIndex 13 -NetworkCategory Private
